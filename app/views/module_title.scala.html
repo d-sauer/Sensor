@@ -1,0 +1,21 @@
+@(title : String, enableRefresh : Boolean = (true), optionsHtml : Html = null)
+<div class="module_title">
+    <div class="title"><h1>@title</h1></div> 
+    <div class="controls">
+        <ul>
+            @if(enableRefresh==true) {
+                <li><a href="#" class="refresh" onclick="slib.module.call('refresh'); return false;"></a></li>
+            }
+            
+            
+            @if(optionsHtml!=null) {
+                @views.html.util.popbox("module_title_options", null, "{'position' : 'left'}"){
+                    <li><a class="options" id="module_title_options"></a></li>
+                }{
+                    @optionsHtml
+                }
+            }
+        </ul>
+    </div> 
+</div>
+<br/>

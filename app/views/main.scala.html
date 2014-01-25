@@ -1,0 +1,174 @@
+@(title: String, headers: Html = Html(""), menu_subtitle : Html = Html(""))(content: Html)
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>@title</title>
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="stylesheet" media="screen"  href="@routes.Assets.at("stylesheets/main.css")">
+
+        <!-- jquery -->
+        <script src="@routes.Assets.at("javascripts/jquery/jquery-1.8.0.js")" type="text/javascript"></script>
+
+        <!-- jquery plugin -->
+        <script src="@routes.Assets.at("javascripts/jquery/jquery.tablePagination.0.5.js")" type="text/javascript"></script>
+        
+        <!-- jquery ui -->        
+        <link rel="stylesheet" media="screen"  href="@routes.Assets.at("stylesheets/sensor-theme/jquery.ui.all.css")">
+        <script src="@routes.Assets.at("javascripts/jqueryui/jquery.ui.core.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/jqueryui/jquery.ui.widget.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/jqueryui/jquery.ui.button.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/jqueryui/jquery.ui.tabs.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/jqueryui/jquery.ui.datepicker.js")" type="text/javascript"></script>
+
+        <!-- HLib - ajax/java library -->
+        <script src="@routes.Assets.at("javascripts/hlib/hlib.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/hlib/hlib.util.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/hlib/hlib.element.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/hlib/hlib.element.util.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/hlib/hlib.element.div.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/hlib/hlib.element.input.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/hlib/hlib.element.select.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/hlib/hlib.element.textarea.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/hlib/hlib.element.label.js")" type="text/javascript"></script>
+        
+        <!-- SLib - sensor library -->
+        <script src="@routes.Assets.at("javascripts/slib/slib.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/slib/slib.util.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/slib/slib.popbox.js")" type="text/javascript"></script>
+        <link rel="stylesheet" media="screen"  href="@routes.Assets.at("stylesheets/slib/popbox/popbox.css")">
+
+        <!-- D3 for charts -->
+        <script src="@routes.Assets.at("javascripts/d3js/d3.v3.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/d3js/multiline_chart.js")" type="text/javascript"></script>
+        
+        @headers @*dodatne skripte*@
+        
+        <script>
+            $(function() {
+                $( "input:submit, button").button();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="menu">
+    		<div class="top_menu">
+        		<div id="top_menu_content" class="content">
+                    <div class="lang"></div>
+                </div>
+    		</div>
+    		<div class="big_menu">
+        		<div class="content">
+                    <div class="logo">
+                        <img src="@routes.Assets.at("images/logo-2.png")" style="height: 60px;"/>
+                    </div>
+                    <div class="clr"></div>
+                    <div id="main_menu_list" class="main_menu">
+                        @menu
+                    </div>
+                
+                </div>
+    		</div>
+        </div>
+        <div class="content_wrapper">
+            <div class="content">
+                @content
+                
+                <br/>
+            </div>
+        </div>
+    </body>
+</html>
+
+
+
+@menu = {
+    <ul class="menu" id="main_menu">
+        @menu_link(routes.Application.index, "Naslovna")
+        @menu_link(routes.Registracija.registracija, "Registracija")
+        @menu_link(routes.ONama.ONama, "O nama")
+                
+        @if(session.get("user")) {
+            <li>
+                <a id='odjava' href='/logout'>
+                  Odjava
+                </a>
+            </li>
+            @menu_my_sensor
+        } else {
+            @menu_prijava
+        }
+    </ul>
+}
+
+@menu_link(href: Call, naziv: String) = {
+    <li><a href="@href" class="@if(href.toString.equals(request.path.toString)) {selected}">@naziv</a></li>
+}
+
+@menu_my_sensor = {
+    @menu_link(controllers.sensor.routes.SensorMain.sensorMain, "My sensors")
+}
+
+@menu_prijava = {
+    @views.html.util.popbox("open_prijava"){
+        <li>
+            <a id='open_prijava' href='#'>
+              Prijava
+            </a>
+        </li>
+    }{
+        <div id="login_form" class="login_form">
+            <label for="userName">Email adresa</label>
+            <br/>
+            <input type="text" id="userName"/>
+            <br/>
+            <label for="userPass" style="margin-top: 5px;">lozinka</label>
+            <br/>
+            <input type="password" id="userPass"/>
+            <br/>
+            <div id="login_form_msg_wrapper" class="ui-widget" style="width: 200px;">
+                <div class="ui-state-highlight ui-corner-all" style="margin-top: 10px; padding: 1px"> 
+                    <p>
+                        <span id="login_form_msg"></span>
+                    </p>
+                </div>
+            </div>
+            <button id="loginButton" style="margin-top: 10px;">Prijava</button>
+            <img id="login_form_ajax_img" src="@routes.Assets.at("images/ajax_a_16.gif")" />
+        </div>
+        <script>
+        main_login();
+       
+        $("#login_form_ajax_img").hide();
+        $('#login_form_msg_wrapper').hide();
+        
+        
+        function main_login() {
+            $("#loginButton").click(function() {
+                $("#login_form_ajax_img").show();
+                $('#login_form_msg_wrapper').hide();
+            
+                HLib.sendData('@routes.Application.login()', '#login_form :input').done(function(json) {
+                    HLib.processData(json);
+                    
+                    if (json.data && json.data.validation_msg) {
+                        $('#login_form_msg').html(json.data.validation_msg);
+                        $('#login_form_msg_wrapper').show();
+                    }
+                    
+                    $("#login_form_ajax_img").hide();
+                    
+                    if (json.data && json.data.login && json.data.login=='LOGIN_GRANTED') {
+                        window.location.href="/sensor/main";
+                    }
+                });
+            });
+        }
+        
+        </script>
+    }
+} 
+
+
+

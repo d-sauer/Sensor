@@ -1,0 +1,43 @@
+@(sensor : module.sensor.models.DBSUserSensor, grid : _root_.controllers.sensor.AllSensorDataView.AllDataGrid)
+
+<script>
+
+</script>
+
+<div>
+
+@if(sensor==null) {
+    Nema podataka..
+} else {
+    <div id="graf">
+    </div>
+        
+    <br/>
+    @if(grid != null) {
+    <table class="sen" id="group_sensor_data_table" style="border: 1px solid #AAA; width: 400px">
+        <thead>
+            <tr>
+                @for(header <- grid.header) {
+                    <th>@header</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for(row <- grid.rows) {
+            <tr>
+                @for(value <- row) {
+                    <td style="padding-left: 5px;">@value</td>
+                }
+            </tr>
+        </tbody>
+        }
+    </table>
+    }
+    
+    <br/>
+    <br/>
+    <div class="clr"> </div>
+}    
+    
+    
+</div>

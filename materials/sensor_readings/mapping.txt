@@ -1,0 +1,110 @@
+FTP server: svego.biz
+Username: svegobiz
+Password: 62Yc9h5guJ
+
+ftp://svegobiz@svego.biz/public_ftp/incoming/meteoSipek/downld08.txt
+
+--
+
+Temp     Hi    Low   Out    Dew  Wind  Wind   Wind    Hi    Hi   Wind   Heat    THW                Rain    Heat    Cool    In     In    In     In     In   In Air   Temp    Hum  Soil 3  Soil 4   Soil    Leaf  Wind  Wind    ISS   Arc.
+ Out   Temp   Temp   Hum    Pt. Speed   Dir    Run Speed   Dir  Chill  Index  Index   Bar    Rain  Rate    D-D     D-D    Temp   Hum    Dew   Heat    EMC Density    2nd    2nd  Moist.  Moist.  Temp 1  Wet 1  Samp   Tx   Recept  Int.
+
+-----
+
+  
+Temperatura
+   - temperature ::  temp out   / In Temp / in heat / Temp 2nd / Soil Temp 1
+   - temperature_high ::hi temp
+   - temperature_low :: low temp
+   
+   
+Humidity    - količina vode koja se nalazi u zraku (koja je isparila)
+    - humidity :: out hum / In hum / Hum 2nd    - vlažnost zraka (http://en.wikipedia.org/wiki/Humidity)
+    - dew_point :: dew pt. / in dew              - rosište - Dew point (http://en.wikipedia.org/wiki/Dew_point)
+    - absolute
+    - relative
+    - specific
+
+Moisture
+    - moisture :: Soi 3 Moist. / Soil 4 Moist.   -vlažnost (prisustvo vode u nekoj tvari)
+    - wet :: Leaf wet
+    - dry 
+    
+Wind
+ - wind_speed :: wind speed   - brzina
+ - wind_run     - brzina
+ - direction   ::    - smjer (string, može biti u stupnjevima, azimunt, ili polovi zemlje; http://en.wikipedia.org/wiki/Wind_direction)
+ - direction_degree   :: u stupnjevima
+ - high_speed   - maksimalna brzina
+ - high_speed_direction       - smjer vjetra kod najveće brzine
+ - high_speed_direction_degree       - smjer vjetra kod najveće brzine
+ - low_speed   - maksimalna brzina
+ - low_speed_direction       - smjer vjetra kod najveće brzine
+ - low_speed_direction_degree       - smjer vjetra kod najveće brzine
+ - wind_chill :: wind chill   - (http://en.wikipedia.org/wiki/Wind_chill) 
+ - wind_sample :: wind samp    - ??
+ - wind_tx      - ??
+ 
+ Pressure
+  - pressure_pascal
+  - pressure_bar
+
+ Rain
+    - rain :: Rain
+    - rain_rate :: Rain rate   - padalina po satu
+ 
+    
+Density
+    - density :: in air density - gustoća zraka
+ 
+  
+ Degree day         - http://en.wikipedia.org/wiki/Degree_day
+    - head :: heat D-D
+    - coll :: cool D-D
+  
+  
+ 
+ custom_data
+    - data_type :: data type
+    - data      :: ISS Recept. / Arc int
+ 
+ Calculated
+ - heat_index :: heat index   - kombinacija temperature i relativne vlažnosti (http://en.wikipedia.org/wiki/Heat_index)
+ - thw_index :: thw index    - temperature-humidity-wind
+ - emc :: in EMC       - Equilibrium Moisture Content (http://en.wikipedia.org/wiki/Equilibrium_moisture_content)
+ 
+  
+ 
+ 
+ 
+ 
+Temp out - degrees celcius (C)
+Hi Temp - degrees celcius (C)
+Low Temp - degrees celcius (C)
+Out Hum - Percent (%)
+Dew Pt. - degrees celcius (C)
+Wind Speed - metres per second (m/s)
+Wind Dir - 8 point compass
+Wind Run - (km)
+Hi Speed - metres per second (m/s)
+Hi Dir - 8 point compass
+Wind Chill - degrees celcius (C)
+Heat Index - degrees celcius (C)
+THW Index - degrees celcius (C)
+THSW Index - degrees celcius (C)
+Bar - Millibars (mb)
+Rain - Millimetres (mm)
+Rain Rate - Millimetres per Hour (mm/hr)
+Solar Rad. - Watts per square metre (W/m2)
+Solar Energy - Ly
+Hi Solar Rad. - Watts per square metre (W/m2)
+UV Index - Ultra Violet index
+UV Dose - MEDs
+Hi UV - Ultra Violet index
+Heat D-D- - degree days
+Cool D-D - degree days
+ET - Millimetres (mm)
+Wind Samp - ??
+Wind Tx - ??
+ISS Recept - Percent %
+Arc. Int. - minutes

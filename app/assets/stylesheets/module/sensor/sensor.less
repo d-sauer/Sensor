@@ -1,0 +1,223 @@
+@import "../../basic_color.less";
+
+.sensor_menu {
+    float: left;
+    width: 200px;
+}
+.sensor_content {
+    float: left;
+    width: 750px;
+}
+
+
+/* Application menu */
+.app_menu {
+
+}
+
+.app_menu a {
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.app_menu  ul {
+    list-style: none;
+    padding: 4px 0px 4px;
+}
+
+.app_menu ul li {
+    padding: 3px 0px 3px;
+}
+
+.app_menu ul li.selected {
+//    border: 1px solid #FF0044;
+}
+
+.app_menu .root_menu {
+    font-weight: bold;
+}
+
+.app_menu .sub_menu {
+    display: none;
+    font-weight: normal;
+    margin-left: 10px;
+}
+
+.module {
+    
+}
+
+.module_title {
+    height: 25px;
+    border-bottom: 2px solid @gray_2;
+}
+
+.module_title .title {
+    float: left;
+}
+
+.module_title .controls {
+    float: right;
+}
+
+.module_title .controls ul {
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+}
+
+.module_title .controls ul li {
+    display: inline;
+}
+
+.module_title .controls ul li a:hover {
+    background-color: @green_light;
+    border: 1px solid @green_light_2;
+    margin-top: 4px;
+}
+
+
+.module_title .refresh {
+    border: 1px solid @green_light;
+    margin-top: 4px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: Transparent url('../../../images/refresh_16.png') no-repeat no-repeat;
+}
+
+.module_title .options {
+    border: 1px solid @green_light;
+    display: inline-block;
+    margin-top: 4px;
+    width: 16px;
+    height: 16px;
+    background: Transparent url('../../../images/options_16.png') no-repeat no-repeat;
+}
+
+
+.title2 {
+    border: 1px solid @green_basic;
+    background-color: @green_light_2;
+    color: @green_dark;    
+    padding: 3px;    
+}
+
+.title2a {
+    color: @green_dark;    
+    font-weight: bold;
+}
+
+.title2b {
+    color: @green_basic;    
+    font-size: 10px;
+}
+
+.title3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: @orange_basic;
+}
+
+.title4 {
+    color: @green_basic;   
+    background-color: @green_light;
+    border: 1px dotted  @green_light_4;
+    font-size: 10px;
+    padding: 2px;
+}
+
+.content2 {
+    border: 1px solid @green_basic;
+    background-color: @green_light;
+    padding: 3px;    
+}
+
+.sgroup {
+    border: 1px solid @green_basic;
+    padding: 0px;
+    width: 330px;    
+}
+
+.sgroup .gcontent {
+    background-color: @input_bg;
+    padding: 3px;
+}
+
+.sgroup .gtitle {
+    padding: 3px;
+    background-color: @green_light_2;
+}
+
+.stabs {
+    padding: 3px;
+    
+}
+
+.stabs .stab {
+    background-color: @green_light_2;
+    border: 1px solid @green_basic;
+    text-decoration: none;
+    cursor: pointer;
+    width: 31%;
+    padding: 5px;
+    float: left;
+}
+
+.stabs .stab:hover {
+    background-color: @green_light_4;
+}
+
+.stabs .selected {
+    background-color: @green_light;
+}
+
+.stabs .selected:hover {
+    border: 1px solid @orange_light;
+    background-color: @green_light;
+    font-weight: bold;
+}
+
+a.btn16:hover {
+    background-color: @orange_light;
+    border: 1px solid @orange_dark;
+}
+
+.sgroup a {
+    text-decoration: none;
+}
+
+a.btn16 {
+//    border: 1px solid @green_gray;
+    border: 1px solid Transparent;
+    margin-top: 4px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+//    background: Transparent url('../../../images/options_16.png') no-repeat no-repeat;
+}
+
+a.options16 {
+    background: Transparent url('../../../images/options_16b.png') no-repeat no-repeat;
+}
+
+a.add16 {
+    background: Transparent url('../../../images/add_16b.png') no-repeat no-repeat;
+}
+
+a.delete16 {
+    background: Transparent url('../../../images/delete_16.png') no-repeat no-repeat;
+}
+
+a.stacktrace16 {
+    background: Transparent url('../../../images/stack_trace_16.png') no-repeat no-repeat;
+}
+
+a.worker16 {
+    background: Transparent url('../../../images/worker_16.png') no-repeat no-repeat;
+}
+
+a.info16 {
+    background: Transparent url('../../../images/info_16.png') no-repeat no-repeat;
+}
+

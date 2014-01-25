@@ -1,0 +1,53 @@
+@(users : java.util.List[module.core.models.DBCUser])
+
+
+
+
+<script>
+    $(function() { $( "input:submit, button").button(); });
+</script>
+
+<div>
+    @views.html.module_title("Pregled korisnika", true, options)
+    <table class="sen">
+        <tr>
+            <th>Korisničko ime</th>
+            <th>Aktivan</th>
+            <th>Korisnik</th>
+            <th>e-mail</th>
+        </tr>
+        @for(user <- users) {
+            <tr>
+                <td valign="middle">
+                    <input type="checkbox" id="ch_@user.id" />
+                    <a href="#" onclick="slib.module('controllers.admin.KorisnikEdit').call('loadModule',@user.id);">@user.userName</a>
+                </td>            
+                <td align="center">
+                    @if(user.active == 0) {
+                        Ne
+                    } else {
+                        @if(user.active == 1) {
+                            Da
+                        } else {
+                            @if(user.active == -1) {
+                                Ne - Novi
+                            } else {
+                                -?-
+                            }
+                        }
+                    }
+                </td>            
+                <td>@user.firstName @user.lastName</td>            
+                <td>@user.email</td>            
+            </tr>
+        }
+    </table>
+</div>
+
+
+@options() = {
+    <div style="padding: 5px;">
+            <button onclick="slib.module.call('activate'); return false;">Aktiviraj</button>
+            <button onclick="slib.module.call('deactivate'); return false;">Deaktiviraj</button>
+    </div>
+}

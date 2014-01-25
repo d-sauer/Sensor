@@ -1,0 +1,82 @@
+@(ugroups : List[_root_.controllers.sensor.UserSensorGroupView.UGroupSensors], users : List[ module.core.models.DBCUser] = null, selUserId : Long = null)
+
+<script>
+    $(document).ready(function() { 
+        $( "input:submit, button").button(); 
+    
+    
+    });
+    
+</script>
+
+<div>
+    @if(users != null) {
+        @views.html.module_title("Grupe senzora", true, options)
+    } else {
+        @views.html.module_title("Grupe senzora", true)
+    }
+    
+    @if(ugroups != null && ugroups.size() !=0 ) {
+            @for(ugroup <- ugroups) {
+                @show_group(ugroup)
+                        
+                @if(ugroup.newLine == true) {
+                    <div class="clr"></div>
+                }
+            }
+        </table>
+    } else {
+        Korisnik nema definirani grupa senzora.
+    }
+    
+</div>
+
+
+@show_group(ugroup : _root_.controllers.sensor.UserSensorGroupView.UGroupSensors) = {
+    <div class="sgroup" style="float:left; margin-right: 20px; margin-bottom:20px;">
+        <div class="gtitle">
+            <a href="#" onclick="slib.module({ 'module':'controllers.sensor.UserGroupSensorsView', 'module_attr':true }).call('loadModule', @ugroup.group.id);">
+                <b>@ugroup.group.name</b>           
+            </a>
+        </div>
+        
+        <div class="gcontent">
+            <table style="width:98%">
+            @for(usensor <- ugroup.sensors) {
+                <tr>
+                    <td>
+                        <a href="#" onclick="slib.module({ 'module':'controllers.sensor.UserGroupSensorsView', 'module_attr':true }).call('loadModule', @ugroup.group.id, @usensor.sensor.id);">
+                            @usensor.sensor.label
+                        </a>
+                    </td>            
+                    <td align="center"><span class="title2b">@usensor.datum()</span></td>
+                    <td align="right" style="font-weight: bold; text-align: right;">@usensor.value()</td>
+                </tr>
+            }
+            </table>
+        </div>
+    </div>
+}
+
+
+
+@options() = {
+    <div style="padding: 5px;">
+            @if(users != null) { 
+            <table>
+                <tr>
+                    <td>Odabir korisnika:</td>
+                    <td>
+                        <select id="admin_select_user">
+                                <option value=""></option> 
+                                @for(user <- users) {
+                                <option value="@user.id" @if(selUserId!=null && selUserId==user.id) { selected="seleted" } >@user.getBestName()</option>
+                                }
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <button onclick="slib.module.call('loadModule'); return false;">Pregledaj podatke korisnika</button>
+            }
+    </div>
+}

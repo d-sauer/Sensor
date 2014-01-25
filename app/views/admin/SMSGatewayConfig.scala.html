@@ -1,0 +1,57 @@
+@(smsSenderStatus:String, smsCronStatus:String)
+<script>
+    $(function() { 
+        $( "input:submit, button").button(); 
+        $( "#thread_tabs" ).tabs();
+    });
+</script>
+
+<div>
+    @views.html.module_title("SMS Gateway config", true)
+
+    
+    <div id="sms_sender" style="width:300px; float:left;">
+        <fieldset>
+            <legend>SMS sender</legend>
+            Status: <label id="sender_status">@smsSenderStatus</label>
+            
+            <br/>
+            <button onclick="slib.module({'content':'#sms_sender' }).call('senderPause');">Pause</button>
+            <button onclick="slib.module({'content':'#sms_sender' }).call('senderStart');">Start</button>
+            <br/>
+            <br/>
+            <fieldset id="test_sms">
+                <legend style="color: #660004; font-weight: bold;;">SMS test</legend>
+                <table>
+                    <tr>
+                        <td>Mobitel</td>
+                        <td><input type="text" style="width: 200px" id="test_sms_broj"/></td>
+                    </tr>
+                    <tr>
+                        <td valign="top">Poruka</td>
+                        <td><textarea style="width: 200px; height: 50px;" id="test_sms_msg"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <label id="test_sms_status"></label><br/>
+                            <button onclick="slib.module({'content':'#test_sms' }).before(function() { $('#sms_status').html(''); }).call('sendTestSMS'); return false;">Pošalji</button>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </fieldset>
+    </div>
+    <div id="sms_cron" style="width:300px; float:left;">
+        <fieldset>
+            <legend>SMS sceduler</legend>
+            Status: <label id="cron_status">@smsCronStatus</label>
+            <br/>
+            <button onclick="slib.module({'content':'#sms_cron' }).call('cronPause');">Pause</button>
+            <button onclick="slib.module({'content':'#sms_cron' }).call('cronStart');">Start</button>
+            <br/>
+        </fieldset>
+    
+    </div>
+
+
+</div>

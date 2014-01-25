@@ -1,0 +1,83 @@
+@(user : module.core.models.DBCUser)
+
+<script>
+    $(document).ready(function() { 
+        $( "input:submit, button").button(); 
+    
+    
+    });
+    
+</script>
+
+<div>
+    @views.html.module_title("Moji podaci", true)
+    
+    <div id="user_data">
+        <fieldset class="row1">
+            <legend>Podaci o korisničkom računu</legend>
+                <table>
+                    <tr>
+                        <td><label>Korisničko ime</label></td>
+                        <td><b>@user.userName</b></td>
+                    </tr>
+                    <tr>
+                        <td><label for="email" >Email *</label></td>
+                        <td><input id="email" type="text" value="@user.email"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="password1">Lozinka *</label></td>
+                        <td><input id="password1" type="password" value="@{_root_.util.StringUtils.replaceChars(user.password, ".", "*")}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="password2">Ponovljena lozinka *</label></td>
+                        <td><input id="password2" type="password" value="@{_root_.util.StringUtils.replaceChars(user.password, ".", "*")}"></td>
+                    </tr>
+                </table>
+        </fieldset>
+        
+        <div class="clr"></div>
+        <fieldset class="row2">
+            <legend>Osobni podaci</legend>
+            <table>
+                <tr>
+                    <td><label for="firstName">Ime</label></td>
+                    <td><input id="firstName" type="text" value="@user.firstName"></td>
+                </tr>
+                <tr>
+                    <td><label for="lastName">Prezime</label></td>
+                    <td><input id="lastName" type="text" value="@user.lastName"></td>
+                </tr>
+                <tr>
+                    <td><label for="phoneLand">Telefon</label></td>
+                    <td><input id="phoneLand" type="text" value="@user.phoneLand"></td>
+                </tr>
+                <tr>
+                    <td><label for="phoneMobile">Mobitel</label></td>
+                    <td><input id="phoneMobile" type="text" value="@user.phoneMobile"></td>
+                </tr>
+            </table>
+        </fieldset>
+        
+        <fieldset class="row3" style="margin-left: 30px;">
+            <legend>Ostali podaci</legend>
+            <table>
+                <tr>
+                    <td><label for="city">Mjesto</label></td>
+                    <td><input id="city" type="text" value="@user.city"></td>
+                </tr>
+                <tr>
+                    <td><label for="postNumber">Poštanski broj</label></td>
+                    <td><input id="postNumber" type="text" value="@user.postNumber"></td>
+                </tr>
+                <tr>
+                    <td><label for="street">Ulica i kučni broj</label></td>
+                    <td><input id="street" type="text" value="@user.street"></td>
+                </tr>
+            </table>
+        </fieldset>
+        <div class="clr"></div>
+        <br/>
+        <button id="btn_user_save" onclick="slib.module.before(function () { $('#btn_user_save span.ui-button-text').html('Spremi ...'); }).call('save').done(function () { $('#btn_user_save span.ui-button-text').html('Spremi'); }); return false;">Spremi</button>
+    </div>
+    
+</div>

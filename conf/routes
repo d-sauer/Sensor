@@ -1,0 +1,21 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index()
+POST    /login                      controllers.Application.login()
+GET     /logout                     controllers.Application.logout()
+POST    /call_:action	            controllers.Application.call(action)
+GET     /registracija               controllers.Registracija.registracija()
+POST    /registracija/call_:action	controllers.Registracija.call(action)
+
+GET     /o_nama               		controllers.ONama.ONama()
+
+# Sensor aplikacija
+GET     /sensor/main               		controllers.sensor.SensorMain.sensorMain()
+POST    /module/call_:action                 controllers.ModuleController.module(action)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+

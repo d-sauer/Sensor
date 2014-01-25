@@ -1,0 +1,21 @@
+@(title: String, menuContainer: module.sensor.menu.Menu)
+
+@header = {
+    <link rel="stylesheet" media="screen"  href="@routes.Assets.at("stylesheets/module/sensor/sensor.css")">
+    
+    <script src="@routes.Assets.at("javascripts/slib/slib.menu.js")" type="text/javascript"></script>
+}
+
+@main(title, header) {
+    
+    <div id="sensor_menu" class="sensor_menu">
+        @views.html.sensor.menu.menu(menuContainer)
+    </div>
+    
+    <div id="sensor_content" class="sensor_content">
+        Sadržaj
+    
+    
+    </div>
+    <div class="clr"></div>
+}

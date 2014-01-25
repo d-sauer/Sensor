@@ -1,0 +1,266 @@
+@(sensorGroup : List[module.sensor.sensor.SupportedSensorGroup], userId : Long, lsg : List[controllers.admin.KorisnikEditSensors.UserSensorGroup] )
+<script>
+    $(function() { 
+        $( "input:submit, button").button(); 
+    });
+</script>
+
+<div>
+
+    
+    <button id="add_group" onclick="slib.popbox.open('add_group');">+ Dodaj grupu</button>    
+    @views.html.util.popupbox("add_group") {
+        <div style="width: 300px; height: 200px; padding: 10px;">
+            <div id="add_group_sensors" style="overflow-y: scroll; height: 160px;">
+                <table>
+                    @for(sg <- sensorGroup) {
+                        <tr>
+                            <td>
+                                    <b>@sg.getName()</b>
+                                    @if(sg.getSensorList().size()!=0) {
+                                        <br/>
+                                        <div style="padding-left: 10px;">
+                                            <table>
+                                                @for(ss <- sg.getSensorList()) {
+                                                    <tr>
+                                                        <td><input type="checkbox" id="sensor:@sg.getIndex():@ss.getIndex()"/></td>
+                                                        <td>@ss.getName()</td>
+                                                    </tr>
+                                                }                                   
+                                            </table>
+                                        </div>
+                                    }
+                            <td>
+                        </tr>
+                    }
+                </table>
+            </div>
+            
+            <br/>
+            <button id="add_selected_sensors" onclick="slib.module({ 'module':'controllers.admin.KorisnikEditSensors','content':'#add_group_sensors' }).call('addSelected', '@userId'); slib.popbox.close();">Dodaj označene senzore</button>
+                
+        </div>
+    }
+
+    <button id="add_group" onclick="slib.popbox.open('del_group');">- Ukloni grupu</button>    
+    @views.html.util.popupbox("del_group") {
+        <div style="padding: 10px;">
+            Dali sigurno želite obrisati 
+            <br/>
+            označene grupe i senzore unutar grupe?            
+
+            <br/>
+            <br/>
+            <button id="del_selected_group" onclick="slib.module({ 'module':'controllers.admin.KorisnikEditSensors','content':'#senzori_korisnika' }).call('DelSelGroup', '@userId'); slib.popbox.close();">Obriši</button>
+                
+        </div>
+    }
+    
+
+    <br/>
+    <br/>
+    <div>
+        @for(usg <- lsg) {
+            <div id="sensor_group_@usg.sg.id">
+                <div class="title2">
+                    <div style="float: left">
+                        <input type="checkbox" id="ch_sensor_group_@usg.sg.id" />
+                        <span class="title2a">@usg.sg.name</span>
+                        <br/>
+                        <span class="title2b" style="padding-left: 5px;">@usg.sg.getGroupClass().getName()</span>
+                    </div>
+                    <div style="float: right">
+                        <a class="btn16 worker16" title="Worker za učitavanje podataka" id="sg_worker_popup_@usg.sg.id" onclick="slib.popbox.open('sg_worker_popup_@usg.sg.id', {'position': 'left'});"></a>
+                        <a class="btn16 options16" title="Postavke grupe" id="sg_options_popup_@usg.sg.id" onclick="slib.popbox.open('sg_options_popup_@usg.sg.id', {'position': 'left'});"></a>
+                        <a class="btn16 add16" title="Dodaj senzore u grupu" onclick="slib.popbox.open('sg_add_popup_@usg.sg.id', {'position': 'left'});"></a>
+                        <a class="btn16 delete16" title="Obriši označene senzore" onclick="slib.popbox.open('sg_del_popup_@usg.sg.id', {'position': 'left'});"></a>
+                        
+                        @sensorGroupWorkerPopup(usg)
+                        @sensorGroupOptionPopup(usg.sg)
+                        @sensorGroupAddPopup(usg.sg)
+                        @sensorGroupDelPopup(usg.sg)
+                    </div>
+                    <div class="clr"></div>
+                </div>
+                @if(usg.sg.getSensors().size()!=0) {
+                    <div class="content2">
+                        <table class="sen" cellspacing="0" cellpadding="0">
+                            @for(s <- usg.sg.getSensors()) {
+                                <tr>
+                                    <td valign="top" align="center" style="width: 20px;">
+                                        <input type="checkbox" id="@s.id"/>
+                                    </td>
+                                    <td valign="top" align="left" style="width: 25px;" >
+                                        <a class="btn16 options16" style="margin:0px;" title="Postavke senzora" onclick="slib.popbox.open('@{"s_options_popup_" + usg.sg.id + "_" + s.id}', {'position': 'left'});"></a>
+                                        @sensorOptionPopup(usg.sg, s)
+                                    </td>
+                                    <td valign="top" style="width: 150px;">
+                                        <span class="title2a">@s.name</span>
+                                        <br/>
+                                        <span class="title2b" style="padding-left: 5px;">@s.getSensorClass().getName()</span>
+                                    </td>
+                                    <td valign="top">
+                                        Parametri:
+                                        @for(sp <- s.getSensorClass().getProperties()) {
+                                            @if(sp.properties().value()==null || sp.properties().value().length==0) {
+                                                <span style="font-size: 10px; color:#AAA;" title="@sp.properties().description()">@sp.properties().label()</span>
+                                            } else {
+                                                <span style="font-size: 10px; font-weight: bold;" title="@sp.properties().description()">
+                                                    @sp.properties().label()
+                                                    <span style="font-size: 9px;">(@sp.properties().value())</span>
+                                                </span>
+                                            }
+                                            ,
+                                        }
+                                    </td>                            
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                }
+            </div>
+            <br/>
+        }
+    
+    </div>
+
+
+@sensorGroupOptionPopup(sg: module.sensor.models.DBSensorGroup) = {
+    @views.html.util.popupbox("sg_options_popup_" + sg.id) {
+            <div style="padding:5px;" id="sg_options_@sg.id">
+                <table cellspacing="4" cellpadding="2">
+                    <tr>
+                        <td>Naziv</td>
+                        <td><input type="text" id="name" value="@sg.name"/></td>
+                    </tr>
+                    <tr>
+                        <td valign="top">Opis</td>
+                        <td><textarea id="description">@sg.description</textarea></td>
+                    </tr>
+                </table>
+                <br/>
+                @showProperties(sg.getGroupClass().getProperties())
+                <br/>
+                <button onclick="slib.module({ 'module':'controllers.admin.KorisnikEditSensors','content':'#sg_options_@sg.id' }).call('SaveGroupOptions', '@sg.id'); slib.popbox.close();">Spremi</button>
+                <br class="clr"/>
+            </div>
+        }
+}
+
+@sensorGroupWorkerPopup(usg: controllers.admin.KorisnikEditSensors.UserSensorGroup) = {
+    @views.html.util.popupbox("sg_worker_popup_" + usg.sg.id) {
+            <div style="padding:5px;" id="sg_worker_@usg.sg.id">
+                <fieldset style="border: 1px solid #A9CC66; width:90%">
+                    <legend>Status</legend>
+                    @if(usg.sw != null) {
+                        <b>@usg.sw.getName()</b>
+                        <br/>
+                        <span class="small_info">@usg.sw.getStatus()</span><br/>            
+                        @if(usg.sw.getStatus() == _root_.util.thread.WorkerStatus.SLEEP) {
+                            @usg.sw.remainSleep() ms
+                        } 
+                        
+                        @if(usg.sw.getStatus() == _root_.util.thread.WorkerStatus.RUNNING) {
+                            @usg.sw.progress.getProgress()
+                            <br/>
+                            Step: @usg.sw.progress.getCurrentStep() / @usg.sw.progress.getMaxStep() (@usg.sw.progress.getProgressPercentage) 
+                        }
+                    }
+                </fieldset>
+                <br class="clr"/>
+                
+                <br/>
+                @if(usg.sw != null) {
+                    <button style="width: 90px; margin: 2px" onclick="slib.module({ 'module':'controllers.admin.KorisnikEditSensors','content':'#senzori_korisnika' }).call('workerPause', @usg.sw.getWorkerId(), @usg.sg.user.id); return false;">Pause</button>
+                    <button style="width: 90px; margin: 2px" onclick="slib.module({ 'module':'controllers.admin.KorisnikEditSensors','content':'#senzori_korisnika' }).call('workerResume', @usg.sw.getWorkerId(), @usg.sg.user.id); return false;">Resume</button>
+                    <br/>
+                    <button style="width: 90px; margin: 2px" onclick="slib.module({ 'module':'controllers.admin.KorisnikEditSensors','content':'#senzori_korisnika' }).call('workerStop', @usg.sw.getWorkerId(), @usg.sg.user.id); return false;">Stop</button>
+                } else {
+                    <button style="width: 90px; margin: 2px" onclick="slib.module({ 'module':'controllers.admin.KorisnikEditSensors','content':'#senzori_korisnika' }).call('workerNew', @usg.sg.id, @usg.sg.user.id); return false;">New</button>
+                }
+                <br class="clr"/>
+            </div>
+        }
+}
+
+@sensorGroupAddPopup(sg: module.sensor.models.DBSensorGroup) = {
+    @views.html.util.popupbox("sg_add_popup_" + sg.id) {
+            <div style="padding:5px;" id="sg_add_@sg.id">
+                <table>
+                    @for(s <- sg.getSupportedSensors()) {
+                        <tr>
+                            <td><input type="checkbox" id="@s.getIndex()" /></td>
+                            <td>@s.getName()</td>
+                        </tr>
+                    }
+                </table>
+                <br/>
+                <button onclick="slib.module({ 'module':'controllers.admin.KorisnikEditSensors','content':'#sg_add_@sg.id' }).call('AddSensor', '@sg.id'); slib.popbox.close();">Dodaj</button>
+            </div>
+        }
+}
+
+@sensorGroupDelPopup(sg: module.sensor.models.DBSensorGroup) = {
+    @views.html.util.popupbox("sg_del_popup_" + sg.id) {
+            <div style="padding:5px;">
+                Dali sigurno želite obrisati <br/>označene senzore iz grupe @sg.name
+                <br/>
+                
+                <button onclick="slib.module({ 'module':'controllers.admin.KorisnikEditSensors','content':'#sensor_group_@sg.id' }).call('DelSensor', '@sg.id'); slib.popbox.close();">Obriši</button>
+            </div>
+        }
+}
+
+@sensorOptionPopup(group: module.sensor.models.DBSensorGroup, sensor: module.sensor.models.DBSensor) = {
+    @views.html.util.popupbox("s_options_popup_" + group.id + "_" + sensor.id) {
+            <div style="padding:5px;" id="s_options_@{group.id + "_" + sensor.id}">
+                <table cellspacing="4" cellpadding="2">
+                    <tr>
+                        <td>Naziv</td>
+                        <td><input type="text" id="name" value="@sensor.name" /></td>
+                    </tr>
+                    <tr>
+                        <td valign="top">Opis</td>
+                        <td><textarea id="description">@sensor.description</textarea></td></td>
+                    </tr>
+                
+                </table>
+                <br/>
+                @showProperties(sensor.getSensorClass().getProperties())
+                <br/>
+                <button onclick="slib.module({ 'module':'controllers.admin.KorisnikEditSensors','content':'#s_options_@{group.id + "_" + sensor.id}' }).call('SaveSensorOptions', '@sensor.id'); slib.popbox.close();">Spremi</button>
+                <br class="clr"/>
+            </div>
+        }
+}
+
+
+@showProperties(lProperties : List[module.sensor.sensor.SensorProperty]) = {
+    @if(lProperties != null) {
+        <fieldset class="row1">
+        <legend>Konfiguracija</legend>
+            <div style="overflow-y:auto; height: 300px; width: 450px;">
+                <table cellspacing="3" cellpadding="2">
+                @for(sp <- lProperties) {
+                    <tr>
+                        <td style="padding-bottom: 5px;">
+                            <b>@sp.properties().label <span class="title2b">&nbsp;(@sp.properties().name)</span></b>
+                            <br/>
+                            <input type="text" id="prop_@sp.properties().name" value="@sp.properties().value()" style="width: 250px"/>
+                            <br/>
+                            <span class="title2b">Opis: @sp.properties().description
+                                @if(sp.properties().defaultValue!=null) {
+                                    <br/>
+                                    Default vrijednost: @sp.properties().defaultValue
+                                }
+                            </span>
+                        </td>
+                    </tr>
+                }
+                </table>
+            </div>
+        </fieldset>
+    }
+}
+
+</div>

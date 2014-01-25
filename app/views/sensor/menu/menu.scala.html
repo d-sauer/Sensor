@@ -1,0 +1,52 @@
+@(menuContainer: module.sensor.menu.Menu)
+
+<div class="app_menu" id="app_menu">
+    @menu(menuContainer)
+</div>
+
+
+
+@menu(menu: module.sensor.menu.Menu)  = {
+    @if(menu.isRoot() == true) {
+       @rootmenu(menu)
+    } else {
+       <a href="#" module="@{menu.getCall()}">
+           @menu.getCaption()
+       </a>
+
+       @if(menu.hasSubmenu()) {
+           @submenu(menu)
+        }
+    }
+}
+
+@rootmenu(subm: module.sensor.menu.Menu) = {
+    <ul class="root_menu">
+    @for(menuEl <- subm.getMenuElements) {
+        <li>
+            @menu(menuEl)
+        </li>
+    }
+    </ul>
+}
+
+@submenu(subm: module.sensor.menu.Menu) = {
+    <ul class="sub_menu" @if(subm.isExpand()) { style="display: block" })>
+    @for(menuEl <- subm.getMenuElements) {
+        <li>
+            @menu(menuEl)
+        </li>
+    }
+    </ul>
+}
+
+
+<script type='text/javascript' charset='utf-8'>
+          $(document).ready(function(){
+            slib.menu.load('app_menu');
+          });
+</script>
+
+
+
+

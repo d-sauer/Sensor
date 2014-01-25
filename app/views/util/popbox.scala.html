@@ -1,0 +1,19 @@
+@(id : String = null, popboxClass : String = "", options : String = "null")(elementToClick: Html = null)(elementToPopup : Html)
+
+@if(id!=null) {
+    <script type='text/javascript' charset='utf-8'>
+              $(document).ready(function(){
+                S.popbox('#@id','#@{id}_popbox', @options);
+              });
+    </script>
+    
+    @elementToClick
+}
+
+<div id='@{id}_popbox' class="popbox @popboxClass">
+  <div class='box'>
+    <div class='arrow'></div>
+    <div class='arrow-border'></div>
+        @elementToPopup
+  </div>
+</div>

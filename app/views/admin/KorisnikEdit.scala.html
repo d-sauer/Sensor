@@ -1,0 +1,106 @@
+@(user : module.core.models.DBCUser, save_status : String = null)
+
+<script>
+    $(function() { 
+        $( "input:submit, button").button(); 
+        $( "#user_edit_tabs" ).tabs();
+        
+        $('#user_edit_tabs').bind('tabsselect', function(event, ui) {
+            if (ui.index == 1) {
+                if (hlib.util.hasContent('senzori_korisnika')) {
+                    // ajax load on first show
+                    slib.module({ 'module' : 'controllers.admin.KorisnikEditSensors' , 'content' : '#senzori_korisnika'}).call('loadModule','@user.id');
+                }
+            };
+        });
+    });
+</script>
+
+<div>
+    @views.html.module_title("Korisnik: " + user.userName, true)
+    <input type="hidden" id="user_id" value="@user.id" />
+    
+    <div id="user_edit_tabs">
+        <ul>
+            <li><a href="#o_korisniku">O korisniku</a></li>
+            <li><a href="#senzori_korisnika">Senzori</a></li>
+        </ul>
+        <div id="o_korisniku">
+            @o_korisniku
+        </div>
+        <div id="senzori_korisnika">
+            @senzori
+        </div>
+    </div>
+</div>
+
+
+@o_korisniku() = {
+    <table class="em" cellspacing="10" cellpadding="10">
+        <tr>
+            <td>Aktiviran</td>
+            <td>
+                <select id="active">
+                    <option value="1" @if(user.active==1) { selected="selected" } >Da</option>
+                    <option value="0" @if(user.active==0) { selected="selected" }>Ne</option>
+                    <option value="-1" @if(user.active==(-1)) { selected="selected" }>Ne - Novi</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Korisničko ime</td>
+            <td><input type="text" id="userName" value="@user.userName" /></td>
+        </tr>
+        <tr>
+            <td>lozinka</td>
+            <td><input type="text" id="password" value="@user.password" /></td>
+        </tr>
+        <tr>
+            <td>e-mail</td>
+            <td><input type="text" id="email" value="@user.email" /></td>
+        </tr>
+        <tr>
+            <td>Ime</td>
+            <td><input type="text" id="firstName" value="@user.firstName" /></td>
+        </tr>
+        <tr>
+            <td>Prezime</td>
+            <td><input type="text" id="lastName" value="@user.lastName" /></td>
+        </tr>
+        <tr>
+            <td>Telefon</td>
+            <td><input type="text" id="phoneLand" value="@user.phoneLand" /></td>
+        </tr>
+        <tr>
+            <td>Mobitel</td>
+            <td><input type="text" id="phoneMobile" value="@user.phoneMobile" /></td>
+        </tr>
+        <tr>
+            <td>Grad</td>
+            <td><input type="text" id="city" value="@user.city" /></td>
+        </tr>
+        <tr>
+            <td>Poštanski broj</td>
+            <td><input type="text" id="postNumber" value="@user.postNumber" /></td>
+        </tr>
+        <tr>
+            <td>Adresa</td>
+            <td><input type="text" id="street" value="@user.street" /></td>
+        </tr>
+        
+        <tr>
+            <td colspan="2">
+                <button onclick="slib.module.call('saveUserData', '@user.id')">Save</button>
+                @if(save_status!=null) {
+                    <br/>
+                    <div id="save_status"></span>
+                }
+            </td>
+        </tr>
+    </table>
+} 
+
+
+@senzori() = {
+   
+}

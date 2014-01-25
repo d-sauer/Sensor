@@ -1,0 +1,140 @@
+@(groups : List[module.sensor.models.DBSUserGroup], users : List[ module.core.models.DBCUser] = null, selUserId : Long = null, sgroups : Set[_root_.controllers.sensor.UserSensorGroupManage.uSensorGroup] = null)
+
+<script>
+    $(document).ready(function() { 
+        $( "input:submit, button").button(); 
+    
+    
+    });
+
+</script>
+
+<div>
+    @if(users != null) {
+        @views.html.module_title("Grupe senzora - postavke", true, options)
+    } else {
+        @views.html.module_title("Grupe senzora - postavke", true)
+    }
+    
+    
+    <button onclick="slib.module.call('addGroup'); return false;">+ Dodaj grupu</button>
+    <br/>
+    <br/>
+    
+    <div style="float:left; width: 350px;">
+        @for(group <- groups) {
+            <div id="group_@group.id">
+                <div style="border: 1px solid #AAA;" >
+                    <table border="0" cellspacing="0" cellpadding="0" style="width:100%; padding:5px;">
+                        <tr>
+                            <td>
+                                <table style="width:100%">
+                                    <tr>
+                                        <td>Naziv grupe</td>
+                                        <td><input type="text" id="group_name_@group.id" value="@group.name" style="width: 90%"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top">Opis grupe</td>
+                                        <td><textarea cols="25" rows="3" id="group_description_@group.id">@group.description</textarea></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button id="btn_save_group_@group.id" onclick="slib.module({'module':'controllers.sensor.UserSensorGroupManage', 'content':'#group_@group.id'}).before(function () { $('#btn_save_group_@group.id span.ui-button-text').html('Spremi ...'); }).call('groupSave', '@group.id').done(function(json) { $('#btn_save_group_@group.id span.ui-button-text').html('Spremi'); });">Spremi</button>
+                                <button onclick="slib.module({'module':'controllers.sensor.UserSensorGroupManage', 'content':'#group_@group.id'}).call('groupDelete', '@group.id').done(function(json) { if(json.isDeleted==true) { $('#group_@group.id').remove() } });">Obriši</button>
+                                <button id="btn_sensor_list_@group.id" style="float: right;" onclick="$('#group_id').val(@group.id); $('#sensor_list').show(); slib.module({'module':'controllers.sensor.UserSensorGroupManage', 'content':'#sensor_list'}).before(function() { $('#btn_sensor_list_@group.id span.ui-button-text').html('Očitanja...'); }).call('loadGroupSensors').done(function() { $('#btn_sensor_list_@group.id span.ui-button-text').html('Očitanja ->'); }); return false;">Očitanja -></button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+            </div>
+        }
+    </div>
+    <div id="sensor_list" style="float: right; padding-right: 20px; display: none;">
+        <input type="hidden" id="group_id" value="" />
+        <div style="width: 300px; height:300px; overflow-x: hidden; overflow-y: show;">
+            <table style="width: 100%">
+            @for(sgroup <- sgroups) {
+                <tr> 
+                    <td>
+                        <b>@sgroup.dbGroup.name</b>
+                    </td>           
+                </tr>        
+                <tr> 
+                    <td style="padding-left: 20px;">
+                        <table class="sen" style="width: 100%" cellspacing="0" cellpadding="0">
+                        @for(as <- sgroup.sensors) {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="sensor___@{as.sensorId}___@{as.groupId}___@{as.tableName}___@{as.columnName}"/>
+                                </td>
+                                <td>
+                                    <label id="lbl_sensor_@{as.sensorId}" for="sensor___@{as.sensorId}___@{as.groupId}___@{as.tableName}___@{as.columnName}" title="@as.description">@as.name</label>
+                                </td>
+                                <td style="width: 10px" align="center">
+                                    <a href="#" class="btn16 info16" onclick="slib.popbox.open('sensor_info_popup'); var gi = $('#group_id').val(); slib.module({'module':'controllers.sensor.UserSensorGroupManage', 'content':'#sensor_info_popup_content' }).call('loadSensorInfo', gi, '@as.sensorId', '@as.tableName', '@as.columnName');"></a>
+                                </td>
+                            </tr>    
+                        }
+                        </table>
+                    </td>           
+                </tr>        
+            }
+            </table>
+        </div>
+        
+        <br/>
+        <button id="btn_save_sensor_list" style="float: left;" onclick="slib.module({'module':'controllers.sensor.UserSensorGroupManage', 'content':'#sensor_list'}).before(function() { $('#btn_save_sensor_list span.ui-button-text').html('Spremi ...'); } ).call('saveGroupSensors').done(function() { $('#btn_save_sensor_list span.ui-button-text').html('Spremi'); }); return false;">Spremi</button>
+    </div>
+    
+</div>
+
+
+@options() = {
+    <div style="padding: 5px;">
+            @if(users != null) { 
+            <table>
+                <tr>
+                    <td>Odabir korisnika:</td>
+                    <td>
+                        <select id="admin_select_user">
+                                <option value=""></option> 
+                                @for(user <- users) {
+                                <option value="@user.id" @if(selUserId!=null && selUserId==user.id) { selected="seleted"  } >@user.getBestName()</option>
+                                }
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <button onclick="slib.module.call('loadModule'); return false;">Pregledaj podatke korisnika</button>
+            }
+    </div>
+}
+
+
+@views.html.util.popupbox("sensor_info_popup") {
+    <div style="padding: 10px;" id="sensor_info_popup_content">
+        <input type="hidden" id="sip_user_sensor_id" value="" />
+        <table>
+            <tr>
+                <td>Naziv</td>
+                <td><input type="text" value="" id="sip_label" /></td>
+            </tr>
+            <tr>
+                <td>Opis</td>
+                <td><textarea cols="25" rows="3" id="sip_description"></textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+<!--                     <button id="btn_sinfo_save" onclick="slib.module({'module':'controllers.sensor.UserSensorGroupManage', 'content':'#sensor_info_popup_content' }).before(function() { $('#btn_sinfo_save span.ui-button-text').html('Spremi ...'); } ).call('saveSensorInfo').done(function() { $('#btn_sinfo_save span.ui-button-text').html('Spremi'); }); return false;">Spremi</button> -->
+                    <button id="btn_sinfo_save" onclick="slib.module({ 'content':'#sensor_info_popup_content' }).before(function() { $('#btn_sinfo_save span.ui-button-text').html('Spremi ...'); } ).call('saveSensorInfo').done(function() { $('#btn_sinfo_save span.ui-button-text').html('Spremi'); }); return false;">Spremi</button>
+                </td>
+            </tr>
+        
+        </table>
+    </div>
+}
+

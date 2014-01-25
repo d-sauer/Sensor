@@ -1,0 +1,229 @@
+@(crons : List[module.sensor.models.DBSUserSmsCron], users : List[ module.core.models.DBCUser] = null, selUserId : Long = null, sgroups : Set[_root_.controllers.sensor.UserSensorGroupManage.uSensorGroup] = null)
+
+<script>
+    $(document).ready(function() { 
+        $( "input:submit, button").button(); 
+    
+    
+    });
+    
+    function addMobileField(_cron_id) {
+        var container = $("#br_mobitela_" + _cron_id);
+        $('<div id="br_mobitela"><input type="text" id="mobitel" value="" style="width:95%; margin-bottom: 2px"/></div>').appendTo($(container));
+        
+    }
+    
+    function cronCalculate(_cron_id) {
+        slib.module({'content':'#cron_' + _cron_id}).before(function () { $('#cron_' + _cron_id + ' #next_scedule').html('...'); }).call('cronCalculate', _cron_id);
+        return false;
+    }
+    
+</script>
+
+<div>
+    @if(users != null) {
+        @views.html.module_title("SMS info", true, options)
+    } else {
+        @views.html.module_title("SMS info", true)
+    }
+    
+        <button onclick="slib.module.call('addCron'); return false;">+ Dodaj definiciju za slanje SMSa</button>
+    <br/>
+    <br/>
+    
+    <div style="float:left; width: 350px;">
+        @for(cron <- crons) {
+            <div id="cron_@cron.id">
+                <div style="border: 1px solid #AAA;" >
+                    <table border="0" cellspacing="0" cellpadding="0" style="width:100%; padding:5px;">
+                        <tr>
+                            <td>
+                                <table style="width:100%">
+                                    <tr>
+                                        <td>Dan</td>
+                                        <td> 
+                                            <select id="dan" onchange="cronCalculate(@cron.id);">
+                                                    <option value="dan_all" @if("all".equals(cron.getRule())){ selected="selected" }>Svaki dan</option>
+                                                <optgroup label="Dani u tjednu">
+                                                    <option value="pon" @if("pon".equals(cron.getRule().dan)){ selected="selected" }>Ponedjeljak</option>
+                                                    <option value="ut" @if("ut".equals(cron.getRule().dan)){ selected="selected" }>Utorak</option>
+                                                    <option value="sri" @if("sri".equals(cron.getRule().dan)){ selected="selected" }>Srijeda</option>
+                                                    <option value="cet" @if("cet".equals(cron.getRule().dan)){ selected="selected" }>Četvrtak</option>
+                                                    <option value="pet" @if("pet".equals(cron.getRule().dan)){ selected="selected" }>Petak</option>
+                                                    <option value="sub" @if("sub".equals(cron.getRule().dan)){ selected="selected" }>Subota</option>
+                                                    <option value="ned" @if("ned".equals(cron.getRule().dan)){ selected="selected" }>Nedjelja</option>
+                                                </optgroup>
+                                                <optgroup label="Dani u mjesecu">
+                                                    @for(i <- 1 to 31) {
+                                                        <option value="dan_@i" @if(("" + i).equals(cron.getRule().dan)){ selected="selected" }>@i.</option>
+                                                    }
+                                                        <option value="dan_end" @if("end".equals(cron.getRule().dan)){ selected="selected" }>Zadnji dan</option>
+                                                </optgroup>
+                                            </select>
+                                        </td>
+                                        <td>Sati</td>
+                                        <td>
+                                            <select id="sat" onchange="cronCalculate(@cron.id);">
+                                                <option value="sat_all" @if("all".equals(cron.getRule().sat)){ selected="selected" }>Svaki sat</option>
+                                                @for(i <- 0 to 24) {
+                                                    <option value="sat_@i" @if(("" + i).equals(cron.getRule().sat)){ selected="selected" }>@i</option>
+                                                }
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mjesec</td>
+                                        <td>
+                                            <select id="mjesec" onchange="cronCalculate(@cron.id);">
+                                                <option value="mjesec_all" @if("all".equals(cron.getRule().mjesec)){ selected="selected" }>Svaki mjesec</option>
+                                                <option value="mjesec_1" @if("1".equals(cron.getRule().mjesec)){ selected="selected" }>Siječanj</option>
+                                                <option value="mjesec_2" @if("2".equals(cron.getRule().mjesec)){ selected="selected" }>Veljača</option>
+                                                <option value="mjesec_3" @if("3".equals(cron.getRule().mjesec)){ selected="selected" }>Ožujak</option>
+                                                <option value="mjesec_4" @if("4".equals(cron.getRule().mjesec)){ selected="selected" }>Travanj</option>
+                                                <option value="mjesec_5" @if("5".equals(cron.getRule().mjesec)){ selected="selected" }>Svibanj</option>
+                                                <option value="mjesec_6" @if("6".equals(cron.getRule().mjesec)){ selected="selected" }>Lipanj</option>
+                                                <option value="mjesec_7" @if("7".equals(cron.getRule().mjesec)){ selected="selected" }>Srpanj</option>
+                                                <option value="mjesec_8" @if("8".equals(cron.getRule().mjesec)){ selected="selected" }>Kolovoz</option>
+                                                <option value="mjesec_9" @if("9".equals(cron.getRule().mjesec)){ selected="selected" }>Rujan</option>
+                                                <option value="mjesec_10" @if("10".equals(cron.getRule().mjesec)){ selected="selected" }>Listopad</option>
+                                                <option value="mjesec_11" @if("11".equals(cron.getRule().mjesec)){ selected="selected" }>Studeni</option>
+                                                <option value="mjesec_12" @if("12".equals(cron.getRule().mjesec)){ selected="selected" }>Prosinac</option>
+                                            </select>
+                                      </td>
+                                      <td>Minute</td>
+                                        <td>
+                                            <select id="minuta" onchange="cronCalculate(@cron.id);">
+                                                @for(i <- 0 to 5) {
+                                                    <option value="min_@{i * 10}" @if(("" + (i * 10)).equals(cron.getRule().minuta)){ selected="selected" }>@{i * 10}</option>
+                                                }
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Godina</td>
+                                        <td colspan="3">
+                                            <select id="godina" onchange="cronCalculate(@cron.id);">
+                                                <option value="godina_all" @if("all".equals(cron.getRule().mjesec)){ selected="selected" }>Svaka godina</option>
+                                                @for(i <- 2012 to (2012 + 5)) {
+                                                    <option value="godina_@i" @if(("" + i).equals(cron.getRule().godina)){ selected="selected" }>@i.</option>
+                                                }
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sljedeće slanje</td>
+                                        <td colspan="3"><label id="next_scedule">@{ _root_.util.DateUtils.getFormatedDate("dd.MM.yyyy HH:mm",cron.getRule().getNext(), "..."); }</label></td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top">
+                                            Mobitel
+                                        </td>
+                                        <td colspan="2">
+                                            <div id="br_mobitela_@cron.id">
+                                                @for(mob <- cron.getMobiles()) {
+                                                <div id="br_mobitela">
+                                                    <input type="text" id="mobitel" value="@mob" style="width:95%; margin-bottom: 2px"/>
+                                                </div>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td valign="bottom">
+                                            <button id="btn_add_mob" onclick="addMobileField(@cron.id); return false;"> + </button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br/>
+                                <button id="btn_save_cron_@cron.id" onclick="slib.module({'content':'#cron_@cron.id'}).before(function () { $('#btn_save_cron_@cron.id span.ui-button-text').html('Spremi ...'); }).call('cronSave', '@cron.id').done(function(json) { $('#btn_save_cron_@cron.id span.ui-button-text').html('Spremi'); });">Spremi</button>
+                                <button onclick="slib.module({'content':'#cron_@cron.id'}).call('cronDelete', '@cron.id').done(function(json) { if(json.isDeleted==true) { $('#cron_@cron.id').remove() } });">Obriši</button>
+                                <button id="btn_sensor_list_@cron.id" style="float: right;" onclick="$('#cron_id').val(@cron.id); $('#sensor_list').show(); slib.module({'content':'#sensor_list'}).before(function() { $('#btn_sensor_list_@cron.id span.ui-button-text').html('Očitanja...'); }).call('loadCronSensors').done(function() { $('#btn_sensor_list_@cron.id span.ui-button-text').html('Očitanja ->'); }); return false;">Senzori -></button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+            </div>
+        }
+    </div>
+    <div id="sensor_list" style="float: right; padding-right: 20px; display: none;">
+        <input type="hidden" id="cron_id" value="" />
+        <div style="width: 300px; height:300px; overflow-x: hidden; overflow-y: show;">
+            <table style="width: 100%">
+            @for(sgroup <- sgroups) {
+                <tr> 
+                    <td>
+                        <b>@sgroup.dbGroup.name</b>
+                    </td>           
+                </tr>        
+                <tr> 
+                    <td style="padding-left: 20px;">
+                        <table class="sen" style="width: 100%" cellspacing="0" cellpadding="0">
+                        @for(as <- sgroup.sensors) {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="sensor___@{as.sensorId}___@{as.groupId}___@{as.tableName}___@{as.columnName}"/>
+                                </td>
+                                <td>
+                                    <label id="lbl_sensor_@{as.sensorId}" for="sensor___@{as.sensorId}___@{as.groupId}___@{as.tableName}___@{as.columnName}" title="@as.description">@as.name</label>
+                                </td>
+                                <td style="width: 10px" align="center">
+                                    <a href="#" class="btn16 info16" onclick="slib.popbox.open('sensor_info_popup'); var gi = $('#cron_id').val(); slib.module({'content':'#sensor_info_popup_content' }).call('loadSensorInfo', gi, '@as.sensorId', '@as.tableName', '@as.columnName');"></a>
+                                </td>
+                            </tr>    
+                        }
+                        </table>
+                    </td>           
+                </tr>        
+            }
+            </table>
+        </div>
+        
+        <br/>
+        <button id="btn_save_sensor_list" style="float: left;" onclick="slib.module({'content':'#sensor_list'}).before(function() { $('#btn_save_sensor_list span.ui-button-text').html('Spremi ...'); } ).call('saveCronSensors').done(function() { $('#btn_save_sensor_list span.ui-button-text').html('Spremi'); }); return false;">Spremi</button>
+    </div>
+    
+</div>
+
+
+
+
+@options() = {
+    <div style="padding: 5px;">
+            @if(users != null) { 
+            <table>
+                <tr>
+                    <td>Odabir korisnika:</td>
+                    <td>
+                        <select id="admin_select_user">
+                                <option value=""></option> 
+                                @for(user <- users) {
+                                <option value="@user.id" @if(selUserId!=null && selUserId==user.id) { selected="seleted"  } >@user.getBestName()</option>
+                                }
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <button onclick="slib.module.call('loadModule'); return false;">Pregledaj podatke korisnika</button>
+            }
+    </div>
+}
+
+
+@views.html.util.popupbox("sensor_info_popup") {
+    <div style="padding: 10px;" id="sensor_info_popup_content">
+        <input type="hidden" id="sip_user_sensor_id" value="" />
+        <table>
+            <tr>
+                <td>Naziv</td>
+                <td><b><label type="text" value="" id="sip_label" /></b></td>
+            </tr>
+            <tr>
+                <td>Opis</td>
+                <td><b><label id="sip_description" /></b></td>
+            </tr>
+        </table>
+    </div>
+}

@@ -1,0 +1,110 @@
+@(workers : java.util.List[_root_.util.thread.Worker], threads : java.util.List[java.lang.Thread])
+
+<script>
+    $(function() { 
+        $( "input:submit, button").button(); 
+        $( "#thread_tabs" ).tabs();
+    });
+</script>
+
+<div>
+    @views.html.module_title("Workers & threads", true, options)
+
+    <div id="thread_tabs">
+        <ul>
+            <li><a href="#workers">Workers</a></li>
+            <li><a href="#all_threads">All threads</a></li>
+        </ul>
+        <br/>
+        <div id="workers">
+            @show_workers
+        </div>
+        <div id="all_threads">
+            @show_threads
+        </div>
+    </div>
+</div>
+
+
+@show_workers = {
+    <table class="sen">
+        <tr>
+            <th colspan="2">Naziv</th>
+            <th>Status</th>
+        </tr>
+        @for(worker <- workers) {
+            <tr>
+                <td valign="top">
+                    <input type="checkbox" value="" id="worker_id_@worker.getWorkerId()"/>
+                    <a class="btn16 options16" style="margin:0px;" title="Postavke" onclick="slib.popbox.open('show_worker_options_@worker.getWorkerId()');"></a>
+                    <a class="btn16 stacktrace16" style="margin:0px;" title="Stack trace" onclick=""></a>
+                    @show_workers_option(worker.getWorkerId())
+                </td>
+                <td>
+                    <b>@worker.getName()</b>
+                    <br/>
+                    <span class="small_info">Created: @_root_.util.DateUtils.getFormatedDateTime(worker.getWhenCreated(), "")</span><br/>            
+                    <span class="small_info">Last start: @_root_.util.DateUtils.getFormatedDateTime(worker.getWhenStarted(), "")</span><br/>            
+                    <span class="small_info">Last end: @_root_.util.DateUtils.getFormatedDateTime(worker.getWhenEnded(), "")</span><br/>            
+                </td>
+                <td valign="top">        
+                    <span class="small_info">@worker.getStatus()</span><br/>            
+                    @if(worker.getStatus() == _root_.util.thread.WorkerStatus.SLEEP) {
+                        @worker.remainSleep() ms
+                    } 
+                    
+                    @if(worker.getStatus() == _root_.util.thread.WorkerStatus.RUNNING) {
+                        @worker.progress.getProgress()
+                        <br/>
+                        Step: @worker.progress.getCurrentStep() / @worker.progress.getMaxStep() (@worker.progress.getProgressPercentage) 
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+@show_workers_option(id : Integer) = {
+    @views.html.util.popupbox("show_worker_options_" + id) {
+        <div style="padding: 10px;">
+            <button style="width: 90px; margin: 2px" onclick="slib.module.call('pause', @id); return false;">Pause</button>
+            <button style="width: 90px; margin: 2px" onclick="slib.module.call('resume', @id); return false;">Resume</button>
+            <br/>
+            <button style="width: 90px; margin: 2px" onclick="slib.module.call('stop', @id); return false;">Stop</button>
+            <button style="width: 90px; margin: 2px" onclick="slib.module.call('stopAndDelete', @id); return false;">Stop & del</button>
+<!--             <button style="width: 80px; margin: 2px" onclick="slib.module.call('start', @id); return false;">Start new</button> -->
+        </div>
+    }
+}
+
+@show_threads = {
+    <table class="sen">
+        <tr>
+            <th>Naziv</th>
+            <th>Grupa</th>
+            <th>Status</th>
+        </tr>
+        @for(thread <- threads) {
+            <tr>
+                <td>@thread.getName()</td>
+                <td>
+                    @if(thread.getThreadGroup() != null) {
+                        @thread.getThreadGroup().getName();
+                    }
+                </td>
+                <td>@thread.getState().toString()</td>
+            </tr>
+        }
+    </table>
+}
+
+
+
+@options() = {
+    <div style="padding: 5px;">
+        <br/>
+        Opcije
+        <br/>
+
+    </div>
+}

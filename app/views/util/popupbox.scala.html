@@ -1,0 +1,9 @@
+@(id : String, popboxClass : String = "")(elementToPopup : Html)
+
+<div id='@{id}_popbox' class="popbox @popboxClass">
+  <div class='box'>
+    <div class='arrow'></div>
+    <div class='arrow-border'></div>
+        @elementToPopup
+  </div>
+</div>

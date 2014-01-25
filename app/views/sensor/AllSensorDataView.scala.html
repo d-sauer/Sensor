@@ -1,0 +1,114 @@
+@(sensorGroups : List[module.sensor.models.DBSensorGroup], users : List[ module.core.models.DBCUser], selUserId : Long = null)
+
+<script>
+    $(document).ready(function() { 
+        $( "input:submit, button").button(); 
+    
+        // Date picker
+        $( "#date_from" ).datepicker({
+            defaultDate: "-3w",
+            changeMonth: true,
+            numberOfMonths: 3,
+            onClose: function( selectedDate ) {
+              $( "#date_from" ).datepicker( "option", "dateFormat", "dd.mm.yy" );
+            }
+          });
+          $( "#date_to" ).datepicker({
+            defaultDate: "-1w",
+            changeMonth: true,
+            numberOfMonths: 3,
+            onClose: function( selectedDate ) {
+              $( "#date_to" ).datepicker( "option", "dateFormat", "dd.mm.yy" );
+            }
+          });
+    
+    });
+    
+</script>
+
+<div>
+    @if(users != null) {
+        @views.html.module_title("Pregled podataka svih senzora", true, options)
+    
+    } else {
+        @views.html.module_title("Pregled podataka svih senzora", true)
+    }
+    
+@if(sensorGroups!=null) {
+    <table>
+        <tr>
+            <td>
+                Grupa senzora:
+                    @if(sensorGroups.size() > 1) {
+                        Grupa senzora: 
+                        <select>
+                            @for(sg <- sensorGroups) {
+                                <options>@sg.name</options>
+                            }
+                        </select> 
+                    } else {
+                        @sensorGroups.get(0).name
+                    }
+                <div>
+                    <table>
+                        <tr>
+                            <td>Popis senzora:</td>
+                            <td>
+                                <select id="sensor">
+                                    <option value=""></option>
+                                    @for(s <- sensorGroups.get(0).sensors) {
+                                        <option value="@s.id">@s.name</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="date_from">Datum od</label></td>
+                            <td>
+                                <input type="text" id="date_from" name="date_from" size="10" />
+                                <label for="date_to"> do </label><input type="text" id="date_to" name="date_to" size="10"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><button onclick="slib.module.call('getSensorData').done(function(json) { loadGraph(json); } );">Prikaži</button></td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+            <td>
+            </td>
+        </tr>
+    </table>
+}
+
+<br/>    
+<div id="ajax_sensor_data">
+
+</div>    
+    
+</div>
+
+
+
+
+
+@options() = {
+    <div style="padding: 5px;">
+            @if(users != null) {
+            <table>
+                <tr>
+                    <td>Odabir korisnika:</td>
+                    <td>
+                        <select id="admin_select_user">
+                                <option value=""></option>
+                            @for(user <- users) {
+                                <option value="@user.id" @if(selUserId!=null && selUserId==user.id) { selected="seleted"  } >@user.getBestName()</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <button onclick="slib.module.call('loadModule'); return false;">Pregledaj podatke korisnika</button>
+            }
+    </div>
+}

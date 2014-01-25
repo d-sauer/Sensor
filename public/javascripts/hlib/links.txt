@@ -1,0 +1,2 @@
+http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
+

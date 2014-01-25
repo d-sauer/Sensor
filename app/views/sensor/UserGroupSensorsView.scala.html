@@ -1,0 +1,132 @@
+@(group : _root_.module.sensor.models.DBSUserGroup, usensors : List[_root_.module.sensor.models.DBSUserSensor] , sensorId : Long = null)
+
+<script>
+    $(document).ready(function() { 
+        $( "input:submit, button").button(); 
+        
+        @if(sensorId != null){
+            checkToCallBack();
+        }
+    
+    });
+    
+    // Date picker
+      $( "#date_from" ).datepicker({
+        defaultDate: "-3w",
+        changeMonth: true,
+        numberOfMonths: 2,
+        onClose: function( selectedDate ) {
+          $( "#date_from" ).datepicker( "option", "dateFormat", "dd.mm.yy" );
+          refreshData();
+        },
+      });
+    
+      $( "#date_to" ).datepicker({
+        defaultDate: "-1w",
+        changeMonth: true,
+        numberOfMonths: 2,
+        onClose: function( selectedDate ) {
+          $( "#date_to" ).datepicker( "option", "dateFormat", "dd.mm.yy" );
+          refreshData();
+        },
+      });
+    
+      function checkToCallBack() {
+        if($('#group_sensor_id').val() != '') {
+            refreshData();
+        }
+      }
+      
+      function loadGraph(json) {
+          chart.multiline.init('graf', json.chart.multiline );
+      }
+      
+      function refreshData() {
+          slib.module.call('showGraph').done(function(json) { loadGraph(json); tablePager(); } );
+      }
+      
+      function tablePager() {
+          var options = {
+                  currPage : 2, 
+                  ignoreRows : [],
+                  optionsForRows : [20,50,100],
+                  rowsPerPage : 20,
+                  firstArrow : (new Image()).src="../assets/images/arrowFirst.gif",
+                  prevArrow : (new Image()).src="../assets/images/arrowPrev.gif",
+                  lastArrow : (new Image()).src="../assets/images/arrowLast.gif",
+                  nextArrow : (new Image()).src="../assets/images/arrowNext.gif",
+                  topNav : false
+               }
+          $('#group_sensor_data_table').tablePagination(options);
+      }
+</script>
+
+<div>
+    <input type="hidden" id="group_id" name="group_id" value="@group.id" />
+    @title("Grupa: " + group.name)
+    
+    <div class="stabs">
+        <input type="hidden" value="@sensorId" id="group_sensor_id" />
+        @for(usensor <- usensors) {
+            <a href="#" class="stab @if(usensor.id==sensorId){ selected }" onclick="$('#group_sensor_id').val(@usensor.id); $('.stabs .stab').removeClass('selected'); $(this).addClass('selected'); refreshData(); return false;">@usensor.label</a>
+        }
+    </div>
+    
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <div id="sensor_data" style="display: none;">
+        <span class="title3" id="sensor_title"></span>
+        <br/>
+        <div class="title4" id="sensor_description" style="margin-left: 20px; margin-right: 30px;"></div>
+            
+        <br/>
+        <label for="date_from">Podaci za period od </label>
+        <input type="text" id="date_from" name="date_from" size="10" />
+        <label for="date_to"> do </label><input type="text" id="date_to" name="date_to" size="10"/>
+        
+        <style>
+            .axis path, .axis line {
+              fill: none;
+              stroke: #000;
+              shape-rendering: crispEdges;
+            }
+            
+            .x.axis path {
+              display: none;
+            }
+            
+            .line {
+              fill: none;
+              stroke: steelblue;
+              stroke-width: 1.5px;
+            }
+        </style>
+        
+        <br/>
+        <br/>
+        <div id="ajax_data_table">
+        </div>
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+@title(title: String) = {
+    <div class="module_title">
+        <div class="title"><h1>@title</h1></div> 
+        <div class="controls">
+            <ul>
+                <li><a href="#" class="refresh" onclick="slib.module.call('refresh', @group.id).done(function() { checkToCallBack(); }); return false;"></a></li>
+            </ul>
+        </div> 
+    </div>
+}

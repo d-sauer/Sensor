@@ -1,0 +1,76 @@
+@(sensor : module.sensor.models.DBSensor, json : org.codehaus.jackson.node.ObjectNode, grid : _root_.controllers.sensor.AllSensorDataView.AllDataGrid)
+
+<script>
+    //$(function() { $( "input:submit, button").button(); $( "#user_edit_tabs" ).tabs(); });
+    $(document).ready(function() { 
+        $( "input:submit, button").button(); 
+        $( "#podaci_tabs" ).tabs(); 
+        
+        $('#podaci_tabs').bind('tabsshow', function(event, ui) {
+            $('#podaci_tabs_selected').val($(ui.panel).attr('id'));
+        });    
+        
+        
+    });
+    
+    function loadGraph(json) {
+        chart.multiline.init('graf_2', json.chart.multiline );
+    }
+</script>
+
+<div>
+
+<style>
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+    
+    .x.axis path {
+      display: none;
+    }
+    
+    .line {
+      fill: none;
+      stroke: steelblue;
+      stroke-width: 1.5px;
+    }
+</style>
+
+@if(sensor==null) {
+    Nema podataka..
+} else {
+    <h2>Senzor: @sensor.name</h2>
+    <span>@sensor.description</span>
+    <br/>
+    Podaci o senzoru
+    
+    <div id="graf_2">
+    </div>
+    
+    <br/>
+    @if(grid != null) {
+    <table class="sen">
+        <tr>
+            @for(header <- grid.header) {
+                <th>@header</th>
+            }
+        </tr>
+        @for(row <- grid.rows) {
+        <tr>
+            @for(value <- row) {
+                <td>@value</td>
+            }
+        </tr>
+        }
+    </table>
+    }
+    
+    <br/>
+    <br/>
+    <div class="clr"> </div>
+}    
+    
+    
+</div>
